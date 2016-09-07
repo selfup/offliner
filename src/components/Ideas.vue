@@ -1,4 +1,6 @@
 <script>
+  import Idea from './Idea.vue'
+  import Search from './Search.vue'
   import IdeasHelper from './../component-helpers/idea-helper'
 
   export default {
@@ -11,6 +13,11 @@
         searchTerm: '',
         searched: false
       }
+    },
+
+    components: {
+      'idea': Idea,
+      'search': Search
     },
 
     methods: {
@@ -45,6 +52,11 @@
       clearallideas () {
         this.ideas = []
         this.helper.lspi.setRecord('ideas', [])
+      },
+
+      searchTermAndSearch(event) {
+        this.searchTerm = event.target.value
+        this.search()
       },
 
       qualitydown (index) {
@@ -115,24 +127,13 @@
     <div class="input-container container">
       <div class="sort-search-container container">
         <div v-if="ideas.length > 1 || searched">
-          <button
-            class="btn btn-primary btn-sm"
-            v-on:click="sortbyquality"
+          <search
+            :clearallideas='clearallideas'
+            :sortbyquality='sortbyquality'
+            :search='search'
+            :searchTermAndSearch='searchTermAndSearch'
           >
-          Sort By Quality
-          </button>
-          <button
-            class="btn btn-warning btn-sm"
-            v-on:click="clearallideas"
-          >
-          Clear All Ideas
-          </button>
-          <h4>Search</h4>
-          <input
-            class="form-control"
-            v-model="searchTerm"
-            v-on:keyup="search"
-          >
+          </search>
         </div>
         <div v-else>
           <h2>Idea Box in Vue.js!</h2>
@@ -158,51 +159,21 @@
       Submit
       </button>
     </div>
-    <div v-for="idea in ideas">
-      <div class="idea-container container">
-        <br>
-        <span
-            class="glyphicon glyphicon-chevron-up up topleft"
-            v-on:click="qualityup($index)"
-          >
-        </span>
-          <span
-            class="glyphicon glyphicon-chevron-down down topleftdown"
-            v-on:click="qualitydown($index)"
-          >
-        </span>
-        <span
-          class="glyphicon glyphicon-remove topright"
-          v-on:click="removeidea($index)"
-        >
-        </span>
-        <br>
-        <h4
-          class="idea-title"
-          v-on:keydown.enter="updateidea($event, $index)"
-          v-on:blur="updateidea($event, $index)"
-          contenteditable="true"
-        >
-        {{ idea.title }}
-        </h4>
-        <h5
-          class="idea-body"
-          v-on:keydown.enter="updateidea($event, $index)"
-          v-on:blur="updateidea($event, $index)"
-          contenteditable="true"
-        >
-        {{ idea.body }}
-        </h5>
-        <hr>
-        <span><em>{{ idea.quality }}</em></span><br>
-        <br>
-        </button>
-      </div>
+    <div v-for="(idea, index) in ideas">
+      <idea
+        :index="index"
+        :idea='idea'
+        :qualityup='qualityup'
+        :qualitydown='qualitydown'
+        :removeidea='qualitydown'
+        :updateidea='updateidea'
+      >
+    </idea>
     </div>
   </div>
 </template>
 
-<style scoped>
+<style>
   button {
     border-radius: 25px;
     margin: 10px;
