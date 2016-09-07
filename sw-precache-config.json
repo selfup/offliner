@@ -1,0 +1,10 @@
+{
+  "staticFileGlobs": [
+    "static/jquery222.min.js",
+    "static/bootstrap337/js/bootstrap.min.js",
+    "static/bootstrap337/css/bootstrap.min.css",
+    "dist/**.js",
+    "dist/**.css",
+    "./**.html"
+  ]
+}

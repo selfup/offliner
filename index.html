@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>offliner</title>
+    <link rel="stylesheet" href="static/bootstrap337/css/bootstrap.min.css">
+    <link rel="stylesheet" href="dist/build.css">
+  </head>
+  <body>
+    <div id="app"></div>
+    <script src="dist/build.js"></script>
+    <script>
+      var sw = `service-worker.js`
+  			var registerServiceWorker = function() {
+  				navigator
+  					.serviceWorker
+  						.register(sw)
+  							.then(function(reg) {
+  								console.log("\n\nService worker registered:\n\n")
+  								reg
+  									.update()
+  										.then(function(reg) {
+  											console.log("\n\nUPDATED\n\n")
+  										})
+  							})
+  			}
+  	    registerServiceWorker()
+    </script>
+    <script src="static/jquery222.min.js"></script>
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="static/bootstrap337/js/bootstrap.min.js"></script>
+  </body>
+</html>
