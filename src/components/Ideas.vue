@@ -1,6 +1,7 @@
 <script>
   import Idea from './Idea.vue'
   import Search from './Search.vue'
+  import InputIdea from './InputIdea.vue'
   import IdeasHelper from './../component-helpers/idea-helper'
 
   export default {
@@ -8,8 +9,8 @@
       return {
         helper: IdeasHelper,
         ideas: IdeasHelper.initIdeas(),
-        title: '',
-        body: '',
+        title: '', // will be a string
+        body: '', // will be a string
         searchTerm: '',
         searched: false
       }
@@ -17,18 +18,23 @@
 
     components: {
       'idea': Idea,
-      'search': Search
+      'search': Search,
+      'inputidea': InputIdea
     },
 
     methods: {
       addidea () {
-        const title = this.title.trim()
-        const body = this.body.trim()
-        if (title && body) {
-          this.createIdea(title, body)
-          this.helper.lspi.setRecord('ideas', this.ideas)
-          this.clearInput()
-        }
+        this.createIdea(this.title, this.body)
+        this.helper.lspi.setRecord('ideas', this.ideas)
+        this.clearInput()
+      },
+
+      updatetitle (event) {
+        this.title = event.target.value
+      },
+
+      updatebody (event) {
+        this.body = event.target.value
       },
 
       createIdea (title, body) {
@@ -141,23 +147,12 @@
         <br>
       </div>
       <h4>Title</h4>
-      <input
-        class="form-control"
-        v-model="title"
-        v-on:keyup.enter="addidea"
+      <inputidea
+        :updatetitle='updatetitle'
+        :updatebody='updatebody'
+        :addidea='addidea'
       >
-      <h4>Body</h4>
-      <input
-        class="form-control"
-        v-model="body"
-        v-on:keyup.enter="addidea"
-      >
-      <button
-        class="btn btn-success"
-        v-on:click="addidea"
-      >
-      Submit
-      </button>
+      </inputidea>
     </div>
     <div v-for="(idea, index) in ideas">
       <idea
