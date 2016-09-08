@@ -3,8 +3,18 @@
     props: [
       'updatetitle',
       'updatebody',
-      'addidea'
-    ]
+      'addidea',
+      'title',
+      'body'
+    ],
+    computed: {
+      inputTitle() {
+        return this.title
+      },
+      inputBody() {
+        return this.body
+      }
+    }
   }
 </script>
 
@@ -12,18 +22,20 @@
   <div>
     <input
       class="form-control"
-      @keyup="updatetitle($event)"
+      v-model='inputTitle'
+      @change='updatetitle($event)'
     >
     <h4>Body</h4>
     <input
       class="form-control"
-      @keyup="updatebody($event)"
+      v-model='inputBody'
+      @change='updatebody($event)'
     >
     <button
       class="btn btn-success"
-      v-on:click="addidea"
+      v-on:click='addidea'
     >
-    Submit
+      Submit
     </button>
   </div>
 </template>
