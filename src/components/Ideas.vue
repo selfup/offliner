@@ -64,7 +64,7 @@
         this.matches(this.searchSegments([], searchTerm))
       },
       searchSegments (matchedIdeas, searchTerm) {
-        this.ideas.slice(0).forEach(idea => {
+        this.ideas.forEach(idea => {
           const title = idea.title.toLowerCase().includes(searchTerm)
           const body = idea.body.toLowerCase().includes(searchTerm)
           if (title || body) matchedIdeas.push(idea)

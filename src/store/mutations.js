@@ -11,25 +11,24 @@ const mutations = {
   UPDATE_BODY (state, newBody) {
     Vue.set(state, 'body', newBody)
   },
-  ADD_IDEA (state, title, body) {
-    const newIdeas = state.ideas.slice(0)
+  ADD_IDEA (state) {
+    const { ideas, title, body } = state
 
-    newIdeas.unshift({
-      title: state.title,
-      body: state.body,
+    ideas.unshift({
+      title: title,
+      body: body,
       quality: 'Swill'
     })
 
-    Vue.set(state, 'ideas', newIdeas)
+    Vue.set(state, 'ideas', ideas)
     Vue.set(state, 'title', '')
     Vue.set(state, 'body', '')
 
-    helper.lspi.setRecord('ideas', newIdeas)
+    helper.lspi.setRecord('ideas', ideas)
   },
   DELETE_IDEA (state, index) {
-    const ideas = state.ideas.slice(0)
+    const { ideas } = state
     ideas.splice(index, 1)
-    console.log(ideas);
     Vue.set(state, 'ideas', ideas)
     helper.lspi.setRecord('ideas', ideas)
   },
@@ -46,25 +45,25 @@ const mutations = {
     if (matchedIdeas[0] !== undefined) Vue.set(state, 'ideas', matchedIdeas)
   },
   EDIT_TILE (state, newText, index) {
-    const ideas = state.ideas.slice(0)
+    const { ideas } = state
     ideas[index].title = newText
     Vue.set(state, 'ideas', ideas)
     helper.lspi.setRecord('ideas', state.ideas)
   },
-  EDIT_BODY (state, newTest) {
-    const ideas = state.ideas.slice(0)
+  EDIT_BODY (state, newText, index) {
+    const { ideas } = state
     ideas[index].body = newText
     Vue.set(state, 'ideas', ideas)
     helper.lspi.setRecord('ideas', state.ideas)
   },
   UP_QUALITY (state, index) {
-    const ideas = state.ideas.slice(0)
+    const { ideas } = state
     ideas[index].quality = helper.qualityUp[ideas[index].quality]
     Vue.set(state, 'ideas', ideas)
     helper.lspi.setRecord('ideas', state.ideas)
   },
   DOWN_QUALITY (state, index) {
-    const ideas = state.ideas.slice(0)
+    const { ideas } = state
     ideas[index].quality = helper.qualityDown[ideas[index].quality]
     Vue.set(state, 'ideas', ideas)
     helper.lspi.setRecord('ideas', state.ideas)
@@ -72,14 +71,14 @@ const mutations = {
   SORT_GENIUS (state) {
     state.helper.sortGenius = false
     Vue.set(state, 'helper', state.helper)
-    const ideas = state.ideas.slice(0)
+    const { ideas } = state
     ideas.sort((a, b) => { return a.quality > b.quality ? 1 : -1 })
     Vue.set(state, 'ideas', ideas)
   },
   SORT_SWILL (state) {
     state.helper.sortGenius = true
     Vue.set(state, 'helper', state.helper)
-    const ideas = state.ideas.slice(0)
+    const { ideas } = state
     ideas.sort((a, b) => { return a.quality < b.quality ? 1 : -1 })
     Vue.set(state, 'ideas', ideas)
   }
