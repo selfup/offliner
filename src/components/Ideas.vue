@@ -2,127 +2,79 @@
   import Idea from './Idea.vue'
   import Search from './Search.vue'
   import InputIdea from './InputIdea.vue'
-  import IdeasHelper from './../component-helpers/idea-helper'
 
   export default {
-    data () {
-      return {
-        helper: IdeasHelper,
-        ideas: IdeasHelper.initIdeas(),
-        title: '', // will be a string
-        body: '', // will be a string
-        searchTerm: '',
-        searched: false
-      }
+    vuex: {
+     getters: {
+       helper: state => state.helper,
+       ideas: state => state.ideas,
+       title: state => state.title,
+       body: state => state.body,
+       searched: state => state.searched
+     }
     },
-
     components: {
       'idea': Idea,
       'search': Search,
       'inputidea': InputIdea
     },
-
+    computed: {
+      emit() {
+        return this.$store.dispatch
+      }
+    },
     methods: {
       addidea () {
-        this.createIdea(this.title, this.body)
-        this.helper.lspi.setRecord('ideas', this.ideas)
-        this.clearInput()
+        this.emit('ADD_IDEA')
       },
-
       updatetitle (event) {
-        this.title = event.target.value
+        this.emit('UPDATE_TITLE', event.target.value)
       },
-
       updatebody (event) {
-        this.body = event.target.value
+        this.emit('UPDATE_BODY', event.target.value)
       },
-
-      createIdea (title, body) {
-        this.ideas.unshift({
-          title: title,
-          body: body,
-          quality: 'Swill'
-        })
-      },
-
       removeidea (index) {
-        this.ideas.splice(index, 1)
-        this.helper.lspi.setRecord('ideas', this.ideas)
+        this.emit('DELETE_IDEA', index)
       },
-
-      clearInput () {
-        this.title = ''
-        this.body = ''
-      },
-
       clearallideas () {
-        this.ideas = []
-        this.helper.lspi.setRecord('ideas', [])
+        this.emit('CLEAR_ALL_IDEAS')
       },
-
       searchTermAndSearch(event) {
-        this.searchTerm = event.target.value
-        this.search()
+        const searchTerm = event.target.value.toLowerCase()
+        this.search(searchTerm)
       },
-
       qualitydown (index) {
-        let currentIdea = this.ideas[index]
-        currentIdea.quality = this.helper.qualityDown[currentIdea.quality]
-        this.helper.lspi.setRecord('ideas', this.ideas)
+        this.emit('DOWN_QUALITY', index)
       },
-
       qualityup (index) {
-        let currentIdea = this.ideas[index]
-        currentIdea.quality = this.helper.qualityUp[currentIdea.quality]
-        this.helper.lspi.setRecord('ideas', this.ideas)
+        this.emit('UP_QUALITY', index)
       },
-
-      sortGeniusTop () {
-        this.helper.sortGenius = false
-        this.ideas.sort((a, b) => { return a.quality > b.quality ? 1 : -1 })
-      },
-
-      sortSwillTop () {
-        this.helper.sortGenius = true
-        this.ideas.sort((a, b) => { return a.quality < b.quality ? 1 : -1 })
-      },
-
       sortbyquality () {
-        if (this.helper.sortGenius) return this.sortGeniusTop()
-        this.sortSwillTop()
+        if (this.helper.sortGenius) return this.emit('SORT_GENIUS')
+        this.emit('SORT_SWILL')
       },
-
-      search () {
-        if (this.searchTerm === '') return this.reload()
-        this.matches(this.searchSegments([]))
-      },
-
       reload () {
-        this.searched = false
-        this.ideas = this.helper.initIdeas()
+        this.emit('RELOAD')
       },
-
       matches (matchedIdeas) {
-        this.searched = true
-        if (matchedIdeas[0] !== undefined) this.ideas = matchedIdeas
+        this.emit('MATCH', matchedIdeas)
       },
-
-      searchSegments (matchedIdeas) {
-        const searchTerm = this.searchTerm.toLowerCase()
-        this.ideas.forEach(idea => {
+      search (searchTerm) {
+        if (searchTerm === '') return this.emit('RELOAD')
+        this.matches(this.searchSegments([], searchTerm))
+      },
+      searchSegments (matchedIdeas, searchTerm) {
+        this.ideas.slice(0).forEach(idea => {
           const title = idea.title.toLowerCase().includes(searchTerm)
           const body = idea.body.toLowerCase().includes(searchTerm)
           if (title || body) matchedIdeas.push(idea)
         })
         return matchedIdeas
       },
-
       updateidea (e, i) {
-        e.preventDefault()
-        const newText = e.target.textContent.trim()
-        if (e.target.className === 'idea-title') this.ideas[i].title = newText
-        if (e.target.className === 'idea-body') this.ideas[i].body = newText
-        this.helper.lspi.setRecord('ideas', this.ideas)
+        const text = e.target.textContent.trim()
+        if (e.target.className === 'idea-title') this.emit('EDIT_TILE', text, i)
+        if (e.target.className === 'idea-body') this.emit('EDIT_BODY', text, i)
       }
     }
   }
@@ -132,7 +84,7 @@
   <div class="container">
     <div class="input-container container">
       <div class="sort-search-container container">
-        <div v-if="ideas.length > 1 || searched">
+        <div v-if='ideas.length > 1 || searched'>
           <search
             :clearallideas='clearallideas'
             :sortbyquality='sortbyquality'
@@ -148,19 +100,21 @@
       </div>
       <h4>Title</h4>
       <inputidea
+        :title='title'
+        :body='body'
         :updatetitle='updatetitle'
         :updatebody='updatebody'
         :addidea='addidea'
       >
       </inputidea>
     </div>
-    <div v-for="(idea, index) in ideas">
+    <div v-for='(idea, index) in ideas'>
       <idea
-        :index="index"
+        :index='index'
         :idea='idea'
         :qualityup='qualityup'
         :qualitydown='qualitydown'
-        :removeidea='qualitydown'
+        :removeidea='removeidea'
         :updateidea='updateidea'
       >
     </idea>
