@@ -1,0 +1,28 @@
+image: "node:6.4"
+
+stages:
+  - test
+  - deploy
+
+lint:
+  stage: test
+  script:
+   - apt-get update -yqqq
+   - npm install
+   - npm test
+ tags:
+   - javascript
+
+pages:
+ stage: deploy
+ script:
+   - apt-get update -yqqq
+   - npm install -g sw-precache
+   - npm install
+   - npm run build
+   - sw-precache --config=./sw-precache-config.json --verbose --no-handle-fetch
+ artifacts:
+   paths:
+     - ./
+ only:
+   - gl-pages
