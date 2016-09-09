@@ -19,8 +19,24 @@ pages:
     - npm install
     - npm run build
     - sw-precache --config=./sw-precache-config.json --verbose --no-handle-fetch
+    - mkdir .public
+    - mkdir .public/dist
+    - mkdir .public/static
+    - mkdir .public/static/bootstrap337
+    - mkdir .public/static/bootstrap337/js
+    - mkdir .public/static/bootstrap337/css
+    - cp dist/build.js .public/dist
+    - cp dist/build.css .public/dist
+    - cp index.html .public
+    - cp static/jquery222.min.js .public/static
+    - cp static/bootstrap337/js/bootstrap.min.js .public/static/bootstrap337/js
+    - cp static/bootstrap337/css/bootstrap.min.css .public/static/bootstrap337/css
+    - cp service-worker.js .public
+    - mv .public public
+    - ls public/dist
+    - ls public/static
   artifacts:
     paths:
-      - ./
+      - public
   only:
     - gl-pages

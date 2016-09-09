@@ -61,15 +61,16 @@
       },
       search (searchTerm) {
         if (searchTerm === '') return this.emit('RELOAD')
-        this.matches(this.searchSegments([], searchTerm))
+        this.matches(this.searchSegments.call(this, searchTerm))
       },
-      searchSegments (matchedIdeas, searchTerm) {
-        this.ideas.forEach(idea => {
-          const title = idea.title.toLowerCase().includes(searchTerm)
-          const body = idea.body.toLowerCase().includes(searchTerm)
-          if (title || body) matchedIdeas.push(idea)
+      searchSegments (term) {
+        return this.ideas.filter(idea => {
+          const { title, body } = idea
+          if (this.check(title, term) || this.check(body, term)) return idea
         })
-        return matchedIdeas
+      },
+      check (value, searchTerm) {
+        return value.toLowerCase().includes(searchTerm)
       },
       updateidea (e, i) {
         const text = e.target.textContent.trim()
