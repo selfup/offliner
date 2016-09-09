@@ -19,7 +19,7 @@
   },
   "dependencies": {
     "bootstrap": "^3.3.7",
-    "lspi": "^1.2.0",
+    "lspi": "^1.2.1",
     "vue": "^2.0.0-rc.1",
     "vuex": "^1.0.0-rc.2"
   },
